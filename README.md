@@ -59,6 +59,17 @@ Or go to **Settings → Plugins** in the control panel and install it from there
 
 ---
 
-## Responsive behaviour
+## Configuration
+
+Copy `vendor/thupsi/craft-singles-manager/src/config/singles-manager.php` to your project's `config/` directory and adjust:
+
+```php
+<?php
+return [
+    // Section handles (or UIDs) whose single entry edit form should have the
+    // right-hand meta sidebar hidden. Useful for "settings"-style singles.
+    'hideSidebarSections' => ['generalSettings', 'seoSettings'],
+];
+```
 
 The injected left sidebar is hidden on viewports narrower than **1280px** to avoid a four-column layout on smaller screens.

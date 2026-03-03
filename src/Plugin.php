@@ -179,6 +179,17 @@ class Plugin extends BasePlugin
         $currentSectionUid = $section->uid;
         $currentSiteId = $element->siteId;
 
+        // Hide the right-hand meta sidebar if this section is listed in
+        // the plugin config's `hideSidebarSections` array (handles or UIDs).
+        $pluginConfig = Craft::$app->getConfig()->getConfigFromFile('singles-manager');
+        $hideSidebarSections = (array)($pluginConfig['hideSidebarSections'] ?? []);
+        if (!empty($hideSidebarSections) && (
+            in_array($section->handle, $hideSidebarSections, true) ||
+            in_array($section->uid, $hideSidebarSections, true)
+        )) {
+            $behavior->metaSidebarHtml = '';
+        }
+
         // Fix the breadcrumb: Section::getPage() looks for the 'singles' source key
         // which our plugin replaced with 'single:{uid}' keys, so it always returns null
         // and the crumb falls back to "Entries". We find the correct page ourselves and
