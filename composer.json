@@ -1,5 +1,5 @@
 {
-    "name": "thupsi/craft-singles-manager",
+    "name": "thupsi/craft-singleton",
     "description": "Expands single sections as individual sources in the Craft CP and adds a persistent left-nav sidebar to the single entry editor.",
     "type": "craft-plugin",
     "license": "proprietary",
@@ -18,7 +18,7 @@
     },
     "extra": {
         "handle": "_singles-manager",
-        "name": "Singles Manager",
+        "name": "Singleton",
         "schemaVersion": "1.0.0",
         "class": "thupsi\\singlesmanager\\Plugin",
         "aliases": {

@@ -1,8 +1,10 @@
-# Singles Manager
+# Singleton
 
 > **Disclaimer:** This plugin was built with the assistance of [Claude](https://claude.ai) (Anthropic) and is provided as a prototype/proof of concept. It is offered as-is, without warranty of any kind. The author accepts no liability for any data loss, site breakage, or other issues arising from its use. That said, the plugin only modifies control panel behaviour — it does not read, write, or touch user content or the database.
 
 A private Craft CMS 5 plugin that improves the control panel experience for single sections (also adds some bonus features for all section types and index pages).
+
+The internal plugin handle remains `_singles-manager` for backwards compatibility with existing project configs.
 
 ---
 
@@ -56,7 +58,7 @@ The "Hide right sidebar" toggle and "Fallback breadcrumb source" selector appear
 ### With DDEV (one command)
 
 ```bash
-ddev composer require thupsi/craft-singles-manager:^0.4.0 && ddev craft plugin/install _singles-manager
+ddev composer require thupsi/craft-singleton:^0.4.0 && ddev craft plugin/install _singles-manager
 ```
 
 ### Manual
@@ -68,7 +70,7 @@ ddev composer require thupsi/craft-singles-manager:^0.4.0 && ddev craft plugin/i
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/thupsi/craft-singles-manager"
+            "url": "https://github.com/thupsi/craft-singleton"
         }
     ]
 }
@@ -83,7 +85,7 @@ composer config --global github-oauth.github.com <your-token>
 #### 2. Require the plugin
 
 ```bash
-composer require thupsi/craft-singles-manager:^0.4.0
+composer require thupsi/craft-singleton:^0.4.0
 ```
 
 #### 3. Install in Craft

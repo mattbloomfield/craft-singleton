@@ -28,7 +28,7 @@ use yii\base\Controller;
 use yii\base\Event;
 
 /**
- * Singles Manager plugin.
+ * Singleton plugin.
  *
  * 1. Expands single sections as individual sources in the entry sources sidebar.
  * 2. Injects a globals-like left-sidebar nav into the standard Craft element
