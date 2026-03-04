@@ -45,7 +45,7 @@ The "Hide right sidebar" toggle and "Fallback breadcrumb source" selector appear
 
 ## Requirements
 
-- Craft CMS **5.0+**
+- Craft CMS **5.9+**
 
 ---
 
