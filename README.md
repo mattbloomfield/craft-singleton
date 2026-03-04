@@ -28,7 +28,7 @@ When a page has only one source, the sources sidebar is hidden automatically —
 
 ### Hide right sidebar (per section)
 
-A toggle on each section's settings page hides the right-hand metadata panel (slug, post date, authors, etc.) when editing an entry in that section. Useful for settings or SEO-style pages where the metadata fields are irrelevant.
+A toggle on each section's settings page hides the right-hand metadata panel (slug, post date, authors, etc.) when editing an entry in that section. Useful for settings (former global sets) pages where the metadata fields are irrelevant.
 
 ### Fallback breadcrumb source for disabled sources
 
