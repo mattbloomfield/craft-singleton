@@ -32,7 +32,7 @@ A toggle on each single section's settings page hides the right-hand metadata pa
 
 ### Fallback breadcrumb source for disabled sources
 
-When any section's source is disabled in the element sources config (e.g. it is grouped inside a custom source), you can assign a **fallback breadcrumb source**. The breadcrumb will then show the correct page and, when the page has multiple sources, the custom source label — instead of the generic "Entries" fallback. The setting has no effect when the section's source is enabled.
+When any section's source is disabled in the element sources config (e.g. it is grouped inside a custom source), you can assign a **fallback breadcrumb source**. The breadcrumb will then show the correct page and, when the page has multiple sources, the custom source label — instead of a disabled breadcrumb segment. The setting has no effect when the section's source is enabled.
 
 ### Smart post-save redirect
 
