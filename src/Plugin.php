@@ -337,14 +337,25 @@ class Plugin extends BasePlugin
             return;
         }
 
+        // Apply "hide right sidebar" for all section types (enabled sources).
+        $response = Craft::$app->getResponse();
+        /** @var CpScreenResponseBehavior|null $behavior */
+        $behavior = $response->getBehavior(CpScreenResponseBehavior::NAME);
+        if ($behavior && in_array($section->uid, $settings->hideSidebarSections, true)) {
+            $originalPrepareScreen = $behavior->prepareScreen;
+            $behavior->prepareScreen = function ($response, $containerId) use ($originalPrepareScreen) {
+                if ($originalPrepareScreen) {
+                    ($originalPrepareScreen)($response, $containerId);
+                }
+                $response->getBehavior(CpScreenResponseBehavior::NAME)->metaSidebarHtml = '';
+            };
+        }
+
         // Sidebar injection and breadcrumb fix below are only for singles.
         if ($section->type !== Section::TYPE_SINGLE) {
             return;
         }
 
-        $response = Craft::$app->getResponse();
-        /** @var CpScreenResponseBehavior|null $behavior */
-        $behavior = $response->getBehavior(CpScreenResponseBehavior::NAME);
         if (!$behavior) {
             return;
         }
@@ -354,21 +365,6 @@ class Plugin extends BasePlugin
 
         // Stay on the single's edit form after saving (instead of going to the entries index).
         $behavior->redirectUrl = '{cpEditUrl}';
-
-        // Hide the right-hand meta sidebar if this section is listed in the plugin settings.
-        // metaSidebarHtml is set INSIDE the prepareScreen closure (by _prepareEditor), which
-        // runs after EVENT_AFTER_ACTION. So we wrap prepareScreen to clear metaSidebarHtml
-        // after the original closure runs.
-        $hidden = ($this->getSettings())->hideSidebarSections;
-        if (in_array($section->uid, $hidden, true)) {
-            $originalPrepareScreen = $behavior->prepareScreen;
-            $behavior->prepareScreen = function ($response, $containerId) use ($originalPrepareScreen) {
-                if ($originalPrepareScreen) {
-                    ($originalPrepareScreen)($response, $containerId);
-                }
-                $response->getBehavior(CpScreenResponseBehavior::NAME)->metaSidebarHtml = '';
-            };
-        }
 
         // Fix the breadcrumb: Section::getPage() looks for the 'singles' source key
         // which our plugin replaced with 'single:{uid}' keys, so it always returns null

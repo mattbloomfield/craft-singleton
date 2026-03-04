@@ -1,6 +1,6 @@
 # Singles Manager
 
-A private Craft CMS 5 plugin that improves the control panel experience for single sections.
+A private Craft CMS 5 plugin that improves the control panel experience for single sections (also adds some bonus features for all section types and index pages).
 
 ---
 
@@ -22,13 +22,9 @@ Main nav items that lead to a page containing a single as their first source lin
 
 When a page has only one source, the sources sidebar is hidden automatically — there is nothing useful to show. The "Customize Sources" button remains accessible.
 
-### Customize Sources button in the singles sidebar
-
-An icon button in the injected left sidebar opens the native **Customize Sources** modal, giving editors access to source configuration without leaving the single edit form. (Admin-only.)
-
 ### Hide right sidebar (per section)
 
-A toggle on each single section's settings page hides the right-hand metadata panel (slug, post date, authors, etc.) when editing that single. Useful for settings or SEO-style pages where the metadata fields are irrelevant.
+A toggle on each section's settings page hides the right-hand metadata panel (slug, post date, authors, etc.) when editing an entry in that section. Useful for settings or SEO-style pages where the metadata fields are irrelevant.
 
 ### Fallback breadcrumb source for disabled sources
 
@@ -58,7 +54,7 @@ The "Hide right sidebar" toggle and "Fallback breadcrumb source" selector appear
 ### With DDEV (one command)
 
 ```bash
-ddev composer require thupsi/craft-singles-manager:^0.3.0 && ddev craft plugin/install _singles-manager
+ddev composer require thupsi/craft-singles-manager:^0.4.0 && ddev craft plugin/install _singles-manager
 ```
 
 ### Manual
@@ -85,7 +81,7 @@ composer config --global github-oauth.github.com <your-token>
 #### 2. Require the plugin
 
 ```bash
-composer require thupsi/craft-singles-manager:^0.3.0
+composer require thupsi/craft-singles-manager:^0.4.0
 ```
 
 #### 3. Install in Craft
