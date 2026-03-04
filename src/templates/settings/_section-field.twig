@@ -12,16 +12,12 @@
         toggle: null
     }) }}
 
-    {% if sectionSourceDisabled %}
-        {{ forms.selectField({
-            label: 'Breadcrumb source' | t('singles-manager'),
-            instructions: 'When this section\'s source is disabled, use the selected source\'s page name as the breadcrumb.' | t('singles-manager'),
-            id: 'singlesManagerBreadcrumbSourceKey',
-            name: 'singlesManager[breadcrumbSourceKey]',
-            options: breadcrumbSourceOptions,
-            value: currentBreadcrumbSourceKey ?? '',
-        }) }}
-    {% else %}
-        <input type="hidden" name="singlesManager[breadcrumbSourceKey]" value="">
-    {% endif %}
+    {{ forms.selectField({
+        label: 'Fallback breadcrumb source' | t('singles-manager'),
+        instructions: 'When this section\'s source is disabled in Sources settings, use the selected source\'s page name as the breadcrumb instead of "Entries".' | t('singles-manager'),
+        id: 'singlesManagerBreadcrumbSourceKey',
+        name: 'singlesManager[breadcrumbSourceKey]',
+        options: breadcrumbSourceOptions,
+        value: currentBreadcrumbSourceKey ?? '',
+    }) }}
 </div>

@@ -461,16 +461,6 @@ class Plugin extends BasePlugin
             $breadcrumbSourceOptions[] = ['label' => $label, 'value' => $src['key']];
         }
 
-        // Determine if the section's own source is currently disabled.
-        $sourceConfigs = Craft::$app->getProjectConfig()->get('elementSources.' . Entry::class) ?? [];
-        $sectionSourceDisabled = false;
-        foreach ($sourceConfigs as $src) {
-            if (($src['key'] ?? null) === 'single:' . $section->uid) {
-                $sectionSourceDisabled = !empty($src['disabled']);
-                break;
-            }
-        }
-
         // Wrap the existing contentHtml closure to append our field.
         $originalContent = $behavior->contentHtml;
         $behavior->contentHtml = function () use (
@@ -478,7 +468,6 @@ class Plugin extends BasePlugin
             $hideRightSidebar,
             $breadcrumbSourceOptions,
             $currentBreadcrumbSourceKey,
-            $sectionSourceDisabled,
         ) {
             $html = is_callable($originalContent) ? ($originalContent)() : ($originalContent ?? '');
             $html .= Craft::$app->getView()->renderTemplate(
@@ -487,7 +476,6 @@ class Plugin extends BasePlugin
                     'hideRightSidebar' => $hideRightSidebar,
                     'breadcrumbSourceOptions' => $breadcrumbSourceOptions,
                     'currentBreadcrumbSourceKey' => $currentBreadcrumbSourceKey,
-                    'sectionSourceDisabled' => $sectionSourceDisabled,
                 ],
                 View::TEMPLATE_MODE_CP,
             );
