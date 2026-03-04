@@ -41,10 +41,6 @@ After saving a single:
 - **Disabled source with a fallback source, page has multiple sources** — redirects to the fallback source's page.
 - **Disabled source with a fallback source, page has only one source** — stays on the edit form.
 
-### Section settings in slideouts
-
-The "Hide right sidebar" toggle and "Fallback breadcrumb source" selector appear both on the full section settings page (**Settings → Sections → [section]**) and inside the slideout that opens when editing section settings from an entry's action menu.
-
 ---
 
 ## Requirements
