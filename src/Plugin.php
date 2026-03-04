@@ -203,16 +203,51 @@ class Plugin extends BasePlugin
             return;
         }
 
-        // If the source for this single is disabled in the element sources config,
-        // it means it's navigated to from a custom link — skip sidebar injection.
+        // Check whether the source for this single is disabled in element sources config.
         $sourceConfigs = Craft::$app->getProjectConfig()->get('elementSources.' . Entry::class) ?? [];
+        $sourceDisabled = false;
         foreach ($sourceConfigs as $src) {
             if (($src['key'] ?? null) === 'single:' . $section->uid) {
-                if (!empty($src['disabled'])) {
-                    return;
-                }
+                $sourceDisabled = !empty($src['disabled']);
                 break;
             }
+        }
+
+        // If the source is disabled and there's a breadcrumb source key stored for
+        // this section, fix only the breadcrumb and skip sidebar injection.
+        // If disabled with no override, skip entirely (navigated from custom link).
+        $settings = $this->getSettings();
+        $breadcrumbSourceKey = $settings->breadcrumbSourceKeys[$section->uid] ?? null;
+
+        if ($sourceDisabled) {
+            if (!$breadcrumbSourceKey) {
+                return;
+            }
+
+            $response = Craft::$app->getResponse();
+            /** @var CpScreenResponseBehavior|null $behavior */
+            $behavior = $response->getBehavior(CpScreenResponseBehavior::NAME);
+            if (!$behavior) {
+                return;
+            }
+
+            $behavior->crumbs = function () use ($breadcrumbSourceKey) {
+                $elementSourcesService = Craft::$app->getElementSources();
+                $currentPage = null;
+                foreach ($elementSourcesService->getSources(Entry::class, withDisabled: true) as $src) {
+                    if (($src['key'] ?? null) === $breadcrumbSourceKey) {
+                        $currentPage = $src['page'] ?? null;
+                        break;
+                    }
+                }
+                $pageLabel = $currentPage ?? 'Entries';
+                $pageUrl = 'content/' . ($currentPage ? StringHelper::toKebabCase($currentPage) : 'entries');
+                return [[
+                    'label' => Craft::t('site', $pageLabel),
+                    'url' => UrlHelper::cpUrl($pageUrl),
+                ]];
+            };
+            return;
         }
 
         $response = Craft::$app->getResponse();
@@ -405,13 +440,55 @@ class Plugin extends BasePlugin
         $hidden = ($this->getSettings())->hideSidebarSections;
         $hideRightSidebar = in_array($section->uid, $hidden, true);
 
+        $breadcrumbSourceKeys = ($this->getSettings())->breadcrumbSourceKeys;
+        $currentBreadcrumbSourceKey = $breadcrumbSourceKeys[$section->uid] ?? null;
+
+        // Collect all non-heading, non-disabled sources as options for the breadcrumb dropdown.
+        $allSources = Craft::$app->getElementSources()->getSources(Entry::class, withDisabled: true);
+        $breadcrumbSourceOptions = [['label' => '—', 'value' => '']];
+        foreach ($allSources as $src) {
+            if (($src['type'] ?? '') === 'heading' || !empty($src['disabled'])) {
+                continue;
+            }
+            if (($src['key'] ?? '') === 'single:' . $section->uid) {
+                continue;
+            }
+            $page = $src['page'] ?? null;
+            $label = $src['label'] ?? $src['key'];
+            if ($page) {
+                $label = Craft::t('site', $page) . ' › ' . Craft::t('site', $label);
+            }
+            $breadcrumbSourceOptions[] = ['label' => $label, 'value' => $src['key']];
+        }
+
+        // Determine if the section's own source is currently disabled.
+        $sourceConfigs = Craft::$app->getProjectConfig()->get('elementSources.' . Entry::class) ?? [];
+        $sectionSourceDisabled = false;
+        foreach ($sourceConfigs as $src) {
+            if (($src['key'] ?? null) === 'single:' . $section->uid) {
+                $sectionSourceDisabled = !empty($src['disabled']);
+                break;
+            }
+        }
+
         // Wrap the existing contentHtml closure to append our field.
         $originalContent = $behavior->contentHtml;
-        $behavior->contentHtml = function () use ($originalContent, $hideRightSidebar) {
+        $behavior->contentHtml = function () use (
+            $originalContent,
+            $hideRightSidebar,
+            $breadcrumbSourceOptions,
+            $currentBreadcrumbSourceKey,
+            $sectionSourceDisabled,
+        ) {
             $html = is_callable($originalContent) ? ($originalContent)() : ($originalContent ?? '');
             $html .= Craft::$app->getView()->renderTemplate(
                 '_singles-manager/settings/_section-field',
-                ['hideRightSidebar' => $hideRightSidebar],
+                [
+                    'hideRightSidebar' => $hideRightSidebar,
+                    'breadcrumbSourceOptions' => $breadcrumbSourceOptions,
+                    'currentBreadcrumbSourceKey' => $currentBreadcrumbSourceKey,
+                    'sectionSourceDisabled' => $sectionSourceDisabled,
+                ],
                 View::TEMPLATE_MODE_CP,
             );
             return $html;
@@ -438,6 +515,7 @@ class Plugin extends BasePlugin
         }
 
         $hidden = ($this->getSettings())->hideSidebarSections;
+        $breadcrumbSourceKeys = ($this->getSettings())->breadcrumbSourceKeys;
 
         $shouldHide = !empty($smParams['hideRightSidebar']);
 
@@ -447,9 +525,17 @@ class Plugin extends BasePlugin
             $hidden = array_values(array_filter($hidden, fn($uid) => $uid !== $section->uid));
         }
 
+        $breadcrumbKey = $smParams['breadcrumbSourceKey'] ?? '';
+        if ($breadcrumbKey !== '') {
+            $breadcrumbSourceKeys[$section->uid] = $breadcrumbKey;
+        } else {
+            unset($breadcrumbSourceKeys[$section->uid]);
+        }
+
         /** @var Settings $settings */
         $settings = $this->getSettings();
         $settings->hideSidebarSections = $hidden;
+        $settings->breadcrumbSourceKeys = $breadcrumbSourceKeys;
         Craft::$app->getPlugins()->savePluginSettings($this, $settings->toArray());
     }
 

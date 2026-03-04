@@ -19,4 +19,13 @@ class Settings extends Model
      * @var string[]
      */
     public array $hideSidebarSections = [];
+
+    /**
+     * Map of sectionUid → sourceKey for sections whose own source is disabled.
+     * The stored source key is used to resolve the breadcrumb page when editing
+     * that single (e.g. pointing to the custom source that groups it).
+     *
+     * @var array<string,string>
+     */
+    public array $breadcrumbSourceKeys = [];
 }
