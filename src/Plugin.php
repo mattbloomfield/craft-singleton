@@ -279,6 +279,35 @@ class Plugin extends BasePlugin
 
                 return $crumbs;
             };
+
+            // After saving: if the fallback source's page has multiple non-heading
+            // sources, redirect to that page; otherwise stay on the edit form.
+            $elementSourcesService = Craft::$app->getElementSources();
+            $allSources = $elementSourcesService->getSources(Entry::class, withDisabled: true);
+            $fallbackPage = null;
+            foreach ($allSources as $src) {
+                if (($src['key'] ?? null) === $breadcrumbSourceKey) {
+                    $fallbackPage = $src['page'] ?? null;
+                    break;
+                }
+            }
+            if ($fallbackPage !== null) {
+                $pageNameId = $elementSourcesService->pageNameId($fallbackPage);
+                $nonHeadingsOnPage = array_filter(
+                    $allSources,
+                    fn($s) => ($s['type'] ?? '') !== 'heading'
+                        && isset($s['page'])
+                        && $elementSourcesService->pageNameId($s['page']) === $pageNameId,
+                );
+                if (count($nonHeadingsOnPage) > 1) {
+                    $behavior->redirectUrl = UrlHelper::cpUrl('content/' . StringHelper::toKebabCase($fallbackPage));
+                } else {
+                    $behavior->redirectUrl = '{cpEditUrl}';
+                }
+            } else {
+                $behavior->redirectUrl = '{cpEditUrl}';
+            }
+
             return;
         }
 
@@ -291,6 +320,9 @@ class Plugin extends BasePlugin
 
         $currentSectionUid = $section->uid;
         $currentSiteId = $element->siteId;
+
+        // Stay on the single's edit form after saving (instead of going to the entries index).
+        $behavior->redirectUrl = '{cpEditUrl}';
 
         // Hide the right-hand meta sidebar if this section is listed in the plugin settings.
         // metaSidebarHtml is set INSIDE the prepareScreen closure (by _prepareEditor), which
