@@ -14,10 +14,6 @@ Single sections are listed individually in the entry element-index sources sideb
 
 Clicking a single in the sources sidebar opens the entry editor with a persistent left-nav sidebar — just like globals work in Craft. The full native entry editor is used (drafts, revisions, preview, publish flow, right-hand metadata panel, etc.).
 
-### Page-aware sidebar
-
-The left sidebar only shows sources belonging to the current CP page (Craft 5.9+ pages feature). Headings, single sources, channel/structure sources, and custom sources are all rendered correctly.
-
 ### Direct nav links
 
 Main nav items that lead to a page containing a single as their first source link directly to that single's edit form, skipping the element index entirely.
