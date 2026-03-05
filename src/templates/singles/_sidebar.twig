@@ -10,14 +10,6 @@
  #   pageIndexUrl           - URL of the current page's element index
  #}
 
-{# Hide the sidebar container on narrower viewports where four columns
-   (global nav + this sidebar + editor + details) would be too cramped. #}
-<style>
-@media only screen and (max-width: 79.9375rem) {
-    #sidebar-container { display: none !important; }
-}
-</style>
-
 <nav>
     <ul class="sources-list">
         {% set nestedUnderHeading = false %}
